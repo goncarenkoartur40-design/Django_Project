@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+         <h1>Książka telefoniczna</h1>
+
+    <h3>Menu:</h3>
+
+    <ul>
+        <li>
+            <a href="/">Home</a>
+        </li>
+        <li>
+            <a href="/dodaj">Dodaj nowy kontakt</a>
+        </li> <li>
+            <a href="/kontakt">kontakt ze mna</a>
+        </li>
+
+    </ul>
+
+<hr/>
+   {% for x in listaKontaktow %}
+         <p>
+             <b>Imie:</b> {{ x.imie }} <br/>
+             <b>Nazwisko:</b> {{ x.nazwisko }} <br/>
+             <b>Telefon:</b> {{ x.telefon }} <br/>
+
+             <a href="{% url 'edytuj' id=x.pk %}">edytuj</a>
+             <a href="{% url 'usun' id=x.pk %}">usuń</a>
+
+         </p>
+   {% endfor %}
+</body>
+</html>
