@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} — DevBoard{% endblock %}
+
+{% block content %}
+
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold">{{ project.name }}</h1>
+            <p class="lead text-muted">{{ project.description|default:"Brak opisu" }}</p>
+        </div>
+        <a href="{% url 'devboard:task-create' %}?project={{ project.pk }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Dodaj zadanie
+        </a>
+        <a href="{% url 'devboard:project-edit' project.pk %}"
+           class="btn btn-warning">
+            Edytuj project
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title text-muted mb-2">Razem zadań</h6>
+                    <h2 class="card-text fw-bold text-primary">{{ tasks.count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title text-muted mb-2">Wysoki priorytet</h6>
+                    <h2 class="card-text fw-bold text-danger">{{ high_priority_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title text-muted mb-2">Średni priorytet</h6>
+                    <h2 class="card-text fw-bold text-warning">{{ medium_priority_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title text-muted mb-2">Niski priorytet</h6>
+                    <h2 class="card-text fw-bold text-info">{{ low_priority_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-light border-bottom">
+        <h5 class="mb-0">
+            <i class="bi bi-list-check"></i> Lista zadań
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if tasks %}
+        <div class="table-responsive">
+           <div class="mb-3">
+    <a href="?">Wszystkie</a> |
+    <a href="?status=TODO">TODO</a> |
+    <a href="?status=IN_PROGRESS">W trakcie</a> |
+    <a href="?status=DONE">Gotowe</a>
+</div>
+
+<table class="table table-hover mb-0">
+    <thead class="table-light">
+        <tr>
+            <th>Tytuł zadania</th>
+            <th>Przypisano do</th>
+            <th>Priorytet</th>
+            <th>Status</th>
+
+            <th>Plik</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td class="fw-500">{{ task.title }}</td>
+
+            <td>
+                {% if task.assignee %}
+                    <span class="badge bg-info">{{ task.assignee.username }}</span>
+                {% else %}
+                    <span class="text-muted">Nie przypisano</span>
+                {% endif %}
+            </td>
+
+
+            <td>
+                {% if task.get_priority_display == 'Wysoki' %}
+                    <span class="badge bg-danger">{{ task.get_priority_display }}</span>
+                {% elif task.get_priority_display == 'Średni' %}
+                    <span class="badge bg-warning">{{ task.get_priority_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ task.get_priority_display }}</span>
+                {% endif %}
+            </td>
+
+            <td>
+                {% if task.get_status_display == 'Ukończone' %}
+                    <span class="badge bg-success">{{ task.get_status_display }}</span>
+                {% elif task.get_status_display == 'W trakcie' %}
+                    <span class="badge bg-info">{{ task.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-light text-dark">{{ task.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td>
+    {% if task.attachment %}
+        <a href="{{ task.attachment.url }}" target="_blank">
+            Pobierz plik
+        </a>
+    {% else %}
+        Brak pliku
+    {% endif %}
+</td>
+
+            <td>
+                <a href="{% url 'devboard:task-edit' task.pk %}"
+                   class="btn btn-warning btn-sm">
+                    Edytuj
+                </a>
+                <a href="{% url 'devboard:task-delete' task.pk %}"
+   class="btn btn-danger btn-sm">
+    Usuń
+</a>
+            </td>
+        </tr>
+        <tr>
+    <td colspan="5">
+        <h6>Komentarze</h6>
+
+        {% for comment in task.comments.all %}
+            <p>
+                <strong>{{ comment.author }}</strong>:
+                {{ comment.body }}
+            </p>
+        {% empty %}
+            <p>Brak komentarzy.</p>
+        {% endfor %}
+
+        <form method="post" action="{% url 'devboard:comment-create' task.pk %}">
+            {% csrf_token %}
+            <textarea name="body" class="form-control mb-2" rows="2" placeholder="Dodaj komentarz..."></textarea>
+            <button type="submit" class="btn btn-primary btn-sm">
+                Dodaj komentarz
+            </button>
+        </form>
+    </td>
+</tr>
+        {% endfor %}
+    </tbody>
+</table>
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center">
+            <i class="bi bi-inbox" style="font-size: 3rem; color: #ddd;"></i>
+            <p class="text-muted mt-3">Brak zadań w tym projekcie.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

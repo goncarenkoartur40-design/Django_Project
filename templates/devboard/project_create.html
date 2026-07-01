@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Projekt</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">
+            Zapisz
+        </button>
+
+        <a href="{% url 'devboard:lista-project' %}"
+           class="btn btn-secondary">
+            Anuluj
+        </a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h3>Usuń zadanie</h3>
+
+            <p>
+                Czy na pewno chcesz usunąć zadanie
+                <strong>"{{ object.title }}"</strong>?
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-danger">
+                    Usuń
+                </button>
+
+                <a href="{% url 'devboard:project-detail' object.project.pk %}"
+                   class="btn btn-secondary">
+                    Anuluj
+                </a>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

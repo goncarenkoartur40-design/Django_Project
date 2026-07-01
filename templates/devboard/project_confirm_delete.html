@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3>Usuń projekt</h3>
+
+            <p>
+                Czy na pewno chcesz usunąć projekt
+                <strong>"{{ object.name }}"</strong>?
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-danger">
+                    Usuń
+                </button>
+            </form>
+
+                <a href="{% url 'devboard:lista-project' %}"
+                   class="btn btn-secondary">
+                    Anuluj
+                </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
