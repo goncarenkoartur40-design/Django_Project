@@ -17,3 +17,5 @@ python manage.py migrate
 python manage.py runserver
 ```
 ## Login feature
+## Footer feature
+Footer added in feature-footer branch.
